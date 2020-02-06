@@ -7,11 +7,11 @@ const IngredientForm = React.memo(props => {
   // const inputState = useState({title: '', amount: ''});
   const [ enteredTitle, setEnteredTitle] = useState('');
   const [ enteredAmount, setEnteredAmount] = useState('');
-
+  // can't have hooks inside functions nor if statement
 
   const submitHandler = event => {
     event.preventDefault();
-    // ...
+    props.onAddIngredient({title: enteredTitle, amount: enteredAmount})
   };
 
   return (
