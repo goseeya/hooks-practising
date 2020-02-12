@@ -27,9 +27,13 @@ const Ingredients = () => {
   useEffect(() => {
     // console.log('rendering ingredients'):
     // twice cuz we rerender when sertUserIngredients
-    console.log('rendering ingredients', userIngredients);
+    console.log('rendering ingredients');
 
-  })
+  }, [userIngredients]);
+
+  const filteredIngredientsHandler = filteredIngredeints => {
+    setUserIngredients(filteredIngredeints);
+  }
 
   const addIngredientHandler = ingredient => {
     fetch('https://react-hooks-update-3a9dd.firebaseio.com/ingredients.json', {
@@ -60,7 +64,7 @@ const Ingredients = () => {
       <IngredientForm onAddIngredient={addIngredientHandler}/>
 
       <section>
-        <Search />
+        <Search onLoadIngredients={filteredIngredientsHandler} />
         <IngredientList ingredients={userIngredients} onRemoveItem={removeIngredientHandler} />
       </section>
     </div>
