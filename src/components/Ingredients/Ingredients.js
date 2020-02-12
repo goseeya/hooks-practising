@@ -24,6 +24,13 @@ const Ingredients = () => {
   }, []);
   // runs only once like componentDidMount
 
+  useEffect(() => {
+    // console.log('rendering ingredients'):
+    // twice cuz we rerender when sertUserIngredients
+    console.log('rendering ingredients', userIngredients);
+
+  })
+
   const addIngredientHandler = ingredient => {
     fetch('https://react-hooks-update-3a9dd.firebaseio.com/ingredients.json', {
       method: 'POST',
