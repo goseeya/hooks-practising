@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 import IngredientForm from './IngredientForm';
 import IngredientList from './IngredientList';
@@ -7,21 +7,21 @@ import Search from './Search';
 const Ingredients = () => {
   const [ userIngredients, setUserIngredients ] = useState([]);
 
-  useEffect(() => {
-    fetch('https://react-hooks-update-3a9dd.firebaseio.com/ingredients.json').then(
-      response => response.json()
-    ).then(responseData => {
-      const loadedIngredients = [];
-      for (const key in responseData) {
-        loadedIngredients.push({
-          id: key,
-          title: responseData[key].title,
-          amount: responseData[key].amount
-        });
-      }
-      setUserIngredients(loadedIngredients);
-    });
-  }, []);
+  // useEffect(() => {
+  //   fetch('https://react-hooks-update-3a9dd.firebaseio.com/ingredients.json').then(
+  //     response => response.json()
+  //   ).then(responseData => {
+  //     const loadedIngredients = [];
+  //     for (const key in responseData) {
+  //       loadedIngredients.push({
+  //         id: key,
+  //         title: responseData[key].title,
+  //         amount: responseData[key].amount
+  //       });
+  //     }
+  //     setUserIngredients(loadedIngredients);
+  //   });
+  // }, []);
   // runs only once like componentDidMount
 
   useEffect(() => {
@@ -31,9 +31,9 @@ const Ingredients = () => {
 
   }, [userIngredients]);
 
-  const filteredIngredientsHandler = filteredIngredeints => {
+  const filteredIngredientsHandler = useCallback(filteredIngredeints => {
     setUserIngredients(filteredIngredeints);
-  }
+  }, [setUserIngredients]); // setUserIngredients will never change so we can omit it
 
   const addIngredientHandler = ingredient => {
     fetch('https://react-hooks-update-3a9dd.firebaseio.com/ingredients.json', {
