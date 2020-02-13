@@ -31,6 +31,7 @@ const Ingredients = () => {
 
   }, [userIngredients]);
 
+  // useCallback - only when the function changes
   const filteredIngredientsHandler = useCallback(filteredIngredeints => {
     setUserIngredients(filteredIngredeints);
   }, [setUserIngredients]); // setUserIngredients will never change so we can omit it
