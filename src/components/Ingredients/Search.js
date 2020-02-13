@@ -9,7 +9,7 @@ const Search = React.memo(props => {
   const inputRef = useRef();
 
   useEffect(() => {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       // enteredFilter would be the old value 500ms ago cuz closure
       if (enteredFilter === inputRef.current.value)  {
         const query =
@@ -32,6 +32,10 @@ const Search = React.memo(props => {
       }
       
     }, 500);
+    // cleanup function
+    return () => {
+      clearTimeout(timer);
+    };
     // rerender also when we want to change whats stored in input ref
   }, [enteredFilter, onLoadIngredients, inputRef]);
 
