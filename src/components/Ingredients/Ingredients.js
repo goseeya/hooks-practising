@@ -16,11 +16,39 @@ const ingredientReducer = (currentIngredients, action) => {
     default:
       throw new Error('Should not get there!');
   }
+};
+
+const httpReducer = (currHttpState, action) => {
+  switch (action.type) {
+    case 'SEND':
+      return {
+        loading: true,
+        error: null
+      };
+    case 'RESPONSE':
+      return {
+        ...currHttpState,
+        loading: false
+      };
+    case 'ERROR':
+      return {
+        loading: false,
+        error: action.errorMessage
+      };
+    case 'CLEAR':
+      return {
+        ...currHttpState,
+        error: null
+      };
+    default:
+      throw new Error('Should not be reached!');
+  }
 }
 
 const Ingredients = () => {
   // second argument is starting state
   const [userIngredients, dispatch] = useReducer(ingredientReducer, []);
+  const [httpState, dispatchHttp] = useReducer(httpReducer, {loading: false, error: null});
   // const [ userIngredients, setUserIngredients ] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState();
@@ -57,13 +85,13 @@ const Ingredients = () => {
   }, []); // setUserIngredients will never change so we can omit it
 
   const addIngredientHandler = ingredient => {
-    setIsLoading(true);
+    dispatchHttp({type: 'SEND'});
     fetch('https://react-hooks-update-3a9dd.firebaseio.com/ingredients.json', {
       method: 'POST',
       body: JSON.stringify(ingredient),
       headers: { 'Content-Type': 'application/json'}
     }).then(response => {
-      setIsLoading(false);
+      dispatchHttp({type: 'RESPONSE'});
       return response.json();
     }).then(responseData => {
       // setUserIngredients(prevIngredients =>
@@ -81,33 +109,34 @@ const Ingredients = () => {
   };
 
   const removeIngredientHandler = ingredientId => {
-    setIsLoading(true);
+    dispatchHttp({type: 'SEND'});
+
     fetch(`https://react-hooks-update-3a9dd.firebaseio.com/ingredients/${ingredientId}.json`, {
       method: 'DELETE'
     }).then(response => {
-      setIsLoading(false);
+      dispatchHttp({type: 'RESPONSE'});
       // setUserIngredients(prevIngredients =>
       //   prevIngredients
       //   .filter(ingredient => ingredient.id !== ingredientId));
       dispatch({type: 'DELETE', id: ingredientId});
     }).catch(error => {
-      setError('Sth is wrong');
-      setIsLoading(false);
+      dispatchHttp({type: 'ERROR', errorMessage: error.message});
+
     })
   }
 
   const clearError = () => {
     // synchronously every function inside, not trigger mamny rerender cycles
     // the new state value is only available in the next component render cycle
-    setError(null);
+    dispatchHttp({type: 'CLEAR'});
   }
 
   return (
     <div className="App">
-      {error && <ErrorModal onClose={clearError}>{error}</ErrorModal>}
+      {httpState.error && <ErrorModal onClose={clearError}>{httpState.error}</ErrorModal>}
       <IngredientForm 
         onAddIngredient={addIngredientHandler}
-        loading={isLoading}
+        loading={httpState.loading}
         />
 
       <section>
