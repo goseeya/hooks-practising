@@ -52,7 +52,7 @@ const Ingredients = () => {
   // useCallback - only when the function changes
   const filteredIngredientsHandler = useCallback(filteredIngredients => {
     // setUserIngredients(filteredIngredeints);
-    dispatch({type: 'SET', filteredIngredients})
+    dispatch({type: 'SET', ingredients: filteredIngredients})
 
   }, []); // setUserIngredients will never change so we can omit it
 
