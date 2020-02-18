@@ -24,7 +24,7 @@ const Ingredients = () => {
   // second argument is starting state
   const [userIngredients, dispatch] = useReducer(ingredientReducer, []);
 
-  const { isLoading, error, data, sendRequest } = useHttp();
+  const { isLoading, error, data, sendRequest, reqExtra, reqIdentifier } = useHttp();
 
 
 
@@ -53,8 +53,16 @@ const Ingredients = () => {
     // console.log('rendering ingredients'):
     // twice cuz we rerender when sertUserIngredients
     console.log('rendering ingredients');
+    if (!isLoading && !error && reqIdentifier === 'REMOVE_INGREDIENT') {
+      dispatch({type: 'DELETE', id: reqExtra})
+    } else if (!isLoading && !error && reqIdentifier === 'ADD_INGREDIENT') {
+      dispatch({type: 'ADD', ingredients: {
+        id: data.name,
+        ...reqExtra
+      }});
+    }
 
-  }, [userIngredients]);
+  }, [data, reqExtra, reqIdentifier, isLoading, error]);
 
   // useCallback - only when the function changes
   const filteredIngredientsHandler = useCallback(filteredIngredients => {
@@ -64,6 +72,12 @@ const Ingredients = () => {
   }, []); // setUserIngredients will never change so we can omit it
 
   const addIngredientHandler = useCallback(ingredient => {
+    sendRequest(
+      'https://react-hooks-update-3a9dd.firebaseio.com/ingredients.json',
+      'POST',
+      JSON.stringify(ingredient),
+    ingredient,
+  'ADD_INGREDIENT');
     // dispatchHttp({type: 'SEND'});
     // fetch('https://react-hooks-update-3a9dd.firebaseio.com/ingredients.json', {
     //   method: 'POST',
@@ -89,7 +103,12 @@ const Ingredients = () => {
 
   const removeIngredientHandler = useCallback(ingredientId => {
     // dispatchHttp({type: 'SEND'});
-    sendRequest(`https://react-hooks-update-3a9dd.firebaseio.com/ingredients/${ingredientId}.json`, 'DELETE');
+    sendRequest(
+      `https://react-hooks-update-3a9dd.firebaseio.com/ingredients/${ingredientId}.json`,
+      'DELETE',
+      null,
+      ingredientId,
+      'REMOVE_INGREDIENT');
 
   }, [sendRequest]);
 
@@ -101,9 +120,9 @@ const Ingredients = () => {
 
   const ingredientList = useMemo(() => {
     return (
-      <IngredientList 
-        ingredients={userIngredients} 
-        onRemoveItem={removeIngredientHandler} 
+      <IngredientList
+        ingredients={userIngredients}
+        onRemoveItem={removeIngredientHandler}
       />
     )
   }, [userIngredients, removeIngredientHandler]);
@@ -112,7 +131,7 @@ const Ingredients = () => {
   return (
     <div className="App">
       {error && <ErrorModal onClose={clearError}>{error}</ErrorModal>}
-      <IngredientForm 
+      <IngredientForm
         onAddIngredient={addIngredientHandler}
         loading={isLoading}
         />
