@@ -84,7 +84,7 @@ const Ingredients = () => {
 
   }, []); // setUserIngredients will never change so we can omit it
 
-  const addIngredientHandler = ingredient => {
+  const addIngredientHandler = useCallback(ingredient => {
     dispatchHttp({type: 'SEND'});
     fetch('https://react-hooks-update-3a9dd.firebaseio.com/ingredients.json', {
       method: 'POST',
@@ -106,9 +106,9 @@ const Ingredients = () => {
               ...ingredient
             }});
     });
-  };
+  }, [dispatchHttp]); // optional cuz reack knows not to rerender it
 
-  const removeIngredientHandler = ingredientId => {
+  const removeIngredientHandler = useCallback(ingredientId => {
     dispatchHttp({type: 'SEND'});
 
     fetch(`https://react-hooks-update-3a9dd.firebaseio.com/ingredients/${ingredientId}.json`, {
@@ -123,7 +123,7 @@ const Ingredients = () => {
       dispatchHttp({type: 'ERROR', errorMessage: error.message});
 
     })
-  }
+  }, []);
 
   const clearError = () => {
     // synchronously every function inside, not trigger mamny rerender cycles
