@@ -56,7 +56,7 @@ const Ingredients = () => {
     if (!isLoading && !error && reqIdentifier === 'REMOVE_INGREDIENT') {
       dispatch({type: 'DELETE', id: reqExtra})
     } else if (!isLoading && !error && reqIdentifier === 'ADD_INGREDIENT') {
-      dispatch({type: 'ADD', ingredients: {
+      dispatch({type: 'ADD', ingredient: {
         id: data.name,
         ...reqExtra
       }});
