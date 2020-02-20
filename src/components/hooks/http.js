@@ -1,5 +1,13 @@
 import { useReducer, useCallback } from 'react';
 
+const initialState = {
+  loading: false,
+  error: null,
+  data: null,
+  extra: null,
+  identifier: null
+};
+
 const httpReducer = (currHttpState, action) => {
     switch (action.type) {
       case 'SEND':
@@ -23,10 +31,7 @@ const httpReducer = (currHttpState, action) => {
           error: action.errorMessage
         };
       case 'CLEAR':
-        return {
-          ...currHttpState,
-          error: null
-        };
+        return initialState;
       default:
         throw new Error('Should not be reached!');
     }
@@ -34,15 +39,9 @@ const httpReducer = (currHttpState, action) => {
 
 // hook will be rerendered with every life-cycle
 const useHttp = () => {
-    const [httpState, dispatchHttp] = useReducer(httpReducer, {
-        loading: false,
-        error: null,
-        data: null,
-        extra: null,
-        identifier: null
-      });
+    const [httpState, dispatchHttp] = useReducer(httpReducer, initialState);
 
-
+const clear = useCallback(() => dispatch({type: 'CLEAR'}), []);
 
   const sendRequest = useCallback((url, method, body, reqExtra, reqIdentifier) => {
     dispatchHttp({type: 'SEND', identifier: reqIdentifier});
@@ -68,7 +67,8 @@ const useHttp = () => {
       error: httpState.error,
       sendRequest: sendRequest,
       reqExtra: httpState.extra,
-      reqIdentifier: httpState.identifier
+      reqIdentifier: httpState.identifier,
+      clear: clear
   };
 
 };

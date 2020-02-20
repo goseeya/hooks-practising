@@ -24,7 +24,7 @@ const Ingredients = () => {
   // second argument is starting state
   const [userIngredients, dispatch] = useReducer(ingredientReducer, []);
 
-  const { isLoading, error, data, sendRequest, reqExtra, reqIdentifier } = useHttp();
+  const { isLoading, error, data, sendRequest, reqExtra, reqIdentifier, clear } = useHttp();
 
 
 
@@ -99,7 +99,7 @@ const Ingredients = () => {
     //           ...ingredient
     //         }});
     // });
-  }, []); // optional dispatchHttp cuz reack knows not to rerender it
+  }, [sendRequest]);
 
   const removeIngredientHandler = useCallback(ingredientId => {
     // dispatchHttp({type: 'SEND'});
@@ -112,11 +112,12 @@ const Ingredients = () => {
 
   }, [sendRequest]);
 
-  const clearError = useCallback(() => {
-    // synchronously every function inside, not trigger mamny rerender cycles
-    // the new state value is only available in the next component render cycle
-    // dispatchHttp({type: 'CLEAR'});
-  }, []);
+  // const clearError = useCallback(() => {
+  //   // synchronously every function inside, not trigger mamny rerender cycles
+  //   // the new state value is only available in the next component render cycle
+  //   // dispatchHttp({type: 'CLEAR'});
+  //   clear();
+  // }, []);
 
   const ingredientList = useMemo(() => {
     return (
@@ -130,7 +131,7 @@ const Ingredients = () => {
 
   return (
     <div className="App">
-      {error && <ErrorModal onClose={clearError}>{error}</ErrorModal>}
+      {error && <ErrorModal onClose={clear}>{error}</ErrorModal>}
       <IngredientForm
         onAddIngredient={addIngredientHandler}
         loading={isLoading}
