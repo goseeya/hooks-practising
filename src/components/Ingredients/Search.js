@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 
 import Card from '../UI/Card';
 import ErrorModal from '../UI/ErrorModal';
-import useHttp from '../../hooks/http';
+import useHttp from '../hooks/http';
 import './Search.css';
 
 const Search = React.memo(props => {
@@ -34,7 +34,7 @@ const Search = React.memo(props => {
   useEffect(() => {
     if (!isLoading && !error && data) {
       const loadedIngredients = [];
-      for (const key in responseData) {
+      for (const key in data) {
         loadedIngredients.push({
           id: key,
           title: data[key].title,
@@ -42,13 +42,12 @@ const Search = React.memo(props => {
         });
       }
       onLoadIngredients(loadedIngredients);
-    });
     }
-  }, [data, loading, error, onLoadIngredients]);
+  }, [data, isLoading, error, onLoadIngredients]);
 
   return (
     <section className="search">
-    {error && <ErrorModal onClose={clear}>{error}</ErrorModal}
+    {error && <ErrorModal onClose={clear}>{error}</ErrorModal>}
       <Card>
         <div className="search-input">
           <label>Filter by Title</label>
@@ -61,7 +60,6 @@ const Search = React.memo(props => {
         </div>
       </Card>
     </section>
-  );
-});
+  )});
 
 export default Search;
